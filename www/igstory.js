@@ -10,8 +10,8 @@ var IGStory = {
   shareImageToStory: function(backgroundImage, cb, err) {
     exec(cb, err, PLUGIN_NAME, 'shareImageToStory', [backgroundImage]);
   },
-  shareVideoToStory: function(backgroundImage, cb, err) {
-    exec(cb, err, PLUGIN_NAME, 'shareVideoToStory', [backgroundImage]);
+  shareVideoToStory: function(opts, cb, err) {
+    exec(cb, err, PLUGIN_NAME, 'shareVideoToStory', [opts.backgroundVideo, opts.stickerImage, opts.attributionURL, opts.backgroundTopColor, opts.backgroundBottomColor]);
   }
 };
 

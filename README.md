@@ -6,7 +6,7 @@ This is a simple plugin that allows to share content to Instagram Stories using 
 
 ## Installation
 
-`cordova plugin add https://github.com/Infinity-Degrees/cordova-plugin-instagram-stories`
+`npm install https://github.com/Infinity-Degrees/cordova-plugin-instagram-stories`
 
 ## Usage
 

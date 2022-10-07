@@ -81,6 +81,30 @@
 
 }
 
+- (void)shareVideoToStory:(CDVInvokedUrlCommand *)command {
+
+    self.callbackId = command.callbackId;
+
+    NSString* backgroundVideo = [command.arguments objectAtIndex:0];
+    NSString* stickerImage = [command.arguments objectAtIndex:1];
+    NSString* attributionURL = [command.arguments objectAtIndex:2];
+    NSString* backgroundTopColor = [command.arguments objectAtIndex:3];
+    NSString* backgroundBottomColor = [command.arguments objectAtIndex:4];
+    
+    NSData *videoData = [self getImageData:backgroundVideo];
+    if (!imageData) {
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Missing Video background"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self finishCommandWithResult:result commandId: command.callbackId];
+        });
+        return;
+    }
+
+    // nil sticker and attribution url for now
+    [self shareBackgroundVideoAndStickerImageWithColor:videoData stickerImage:nil attributionURL:nil backgroundTopColor:backgroundTopColor backgroundBottomColor:backgroundBottomColor commandId:command.callbackId];
+
+}
+
 - (void)shareBackgroundAndStickerImage:(NSData *)backgroundImage stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL commandId:(NSString *)command  {
 
     // Verify app can open custom URL scheme. If able,
@@ -168,6 +192,57 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [self finishCommandWithResult:result commandId: command];
         });
+    }
+}
+
+- (void)shareBackgroundVideoAndStickerImageWithColor:(NSData *)backgroundVideo stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL backgroundTopColor:(NSString *)backgroundTopColor backgroundBottomColor:(NSString *)backgroundBottomColor commandId:(NSString *)command  {
+
+    // Verify app can open custom URL scheme. If able,
+    // assign assets to pasteboard, open scheme.
+    NSURL *urlScheme = [NSURL URLWithString:@"instagram-stories://share"];
+    if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
+      
+      NSLog(@"IG IS AVAIALBLE");
+
+      // Assign background and sticker image assets and
+      // attribution link URL and the background colors to pasteboard
+      NSMutableDictionary *pasteboardItemsDictionary = [@{ @"com.instagram.sharedSticker.backgroundVideo" : backgroundImage } mutableCopy];
+      if (stickerImage) {
+        pasteboardItemsDictionary[@"com.instagram.sharedSticker.stickerImage"] = stickerImage;
+      }
+      if (attributionURL) {
+        pasteboardItemsDictionary[@"com.instagram.sharedSticker.contentURL"] = attributionURL;
+      }
+      if (backgroundTopColor && backgroundBottomColor) {
+        pasteboardItemsDictionary[@"com.instagram.sharedSticker.backgroundTopColor"] = backgroundTopColor;
+        pasteboardItemsDictionary[@"com.instagram.sharedSticker.backgroundBottomColor"] = backgroundBottomColor;
+      }
+
+      NSArray *pasteboardItems = @[pasteboardItemsDictionary];
+      NSDictionary *pasteboardOptions = @{UIPasteboardOptionExpirationDate : [[NSDate date] dateByAddingTimeInterval:60 * 5]};
+      // This call is iOS 10+, can use 'setItems' depending on what versions you support
+      [[UIPasteboard generalPasteboard] setItems:pasteboardItems options:pasteboardOptions];
+
+      [[UIApplication sharedApplication] openURL:urlScheme options:@{} completionHandler:nil];
+
+      NSDictionary *payload = [NSDictionary dictionaryWithObjectsAndKeys:attributionURL, @"url", nil];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                        messageAsDictionary:payload];
+
+      dispatch_async(dispatch_get_main_queue(), ^{
+          [self finishCommandWithResult:result commandId: command];
+       });
+
+    } else {
+      // Handle older app versions or app not installed case
+      
+     NSLog(@"IG IS NOT AVAILABLE");
+      
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Not installed"];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self finishCommandWithResult:result commandId: command];
+     });
     }
 }
 

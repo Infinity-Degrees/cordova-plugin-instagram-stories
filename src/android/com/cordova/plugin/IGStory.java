@@ -58,6 +58,11 @@ public class IGStory extends CordovaPlugin {
         String backgroundImageData = args.getString(0);
 
         shareImageToStory(backgroundImageData, callbackContext);
+      } else if (action.equals("shareVideoToStory")) {
+        String videoUrl = args.getString(0);
+
+        shareVideoToStory(videoUrl, callbackContext);
+      }
       } else {
         callbackContext.error("ig not installed");
       }
@@ -174,6 +179,43 @@ public class IGStory extends CordovaPlugin {
       callbackContext.success("shared");
     } catch (Exception e) {
       Log.e(TAG, "error in shareImageToStory");
+      Log.e(TAG, e.getMessage());
+      callbackContext.error(e.getMessage());
+    }
+
+  }
+
+  // TODO: fix this for videos
+  private void shareVideoToStory(String backgroundImageData, CallbackContext callbackContext) {
+
+    try {
+      File parentDir = this.webView.getContext().getExternalFilesDir(null);
+      File backgroundImageFile = File.createTempFile("instagramBackground", ".mp4", parentDir);
+      Log.i(TAG, "made it here");
+
+      saveImage(backgroundImageData, backgroundImageFile);
+
+      Log.i(TAG, "savedVideo");
+
+      Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
+      intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      
+      FileProvider FileProvider = new FileProvider();
+      Uri backgroundUri = FileProvider.getUriForFile(this.cordova.getActivity().getBaseContext(), this.cordova.getActivity().getBaseContext().getPackageName() + ".provider", backgroundImageFile);
+
+      Log.i(TAG, "got backgroundUri: " + backgroundUri);
+
+      intent.setDataAndType(backgroundUri, "video/mp4");
+
+      Log.i(TAG, "instantiating activity");
+      // Instantiate activity and verify it will resolve implicit intent
+      Activity activity = this.cordova.getActivity();
+      activity.grantUriPermission("com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+      activity.startActivityForResult(intent, 0);
+      callbackContext.success("shared");
+    } catch (Exception e) {
+      Log.e(TAG, "error in shareVideoToStory");
       Log.e(TAG, e.getMessage());
       callbackContext.error(e.getMessage());
     }

@@ -75,7 +75,7 @@
             [self finishCommandWithResult:result commandId: command.callbackId];
         });
         return;
-    }    
+    }
 
     [self shareBackgroundAndStickerImage:imageData stickerImage:nil attributionURL:nil commandId:command.callbackId];
 
@@ -101,7 +101,7 @@
     }
 
     // nil sticker and attribution url for now
-    [self shareBackgroundVideoAndStickerImageWithColor:videoData stickerImage:nil attributionURL:nil backgroundTopColor:backgroundTopColor backgroundBottomColor:backgroundBottomColor commandId:command.callbackId];
+    [self shareBackgroundVideoAndStickerImageWithColor:videoData stickerImage:stickerImage attributionURL:nil backgroundTopColor:backgroundTopColor backgroundBottomColor:backgroundBottomColor commandId:command.callbackId];
 
 }
 
@@ -195,7 +195,7 @@
     }
 }
 
-- (void)shareBackgroundVideoAndStickerImageWithColor:(NSData *)backgroundVideo stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL backgroundTopColor:(NSString *)backgroundTopColor backgroundBottomColor:(NSString *)backgroundBottomColor commandId:(NSString *)command  {
+- (void)shareBackgroundVideoAndStickerImageWithColor:(NSData *)backgroundVideo stickerImage:(NSString *)stickerImageURL attributionURL:(NSString *)attributionURL backgroundTopColor:(NSString *)backgroundTopColor backgroundBottomColor:(NSString *)backgroundBottomColor commandId:(NSString *)command  {
 
     // Verify app can open custom URL scheme. If able,
     // assign assets to pasteboard, open scheme.
@@ -207,9 +207,11 @@
       // Assign background and sticker image assets and
       // attribution link URL and the background colors to pasteboard
       NSMutableDictionary *pasteboardItemsDictionary = [@{ @"com.instagram.sharedSticker.backgroundVideo" : backgroundVideo } mutableCopy];
-      if (stickerImage) {
-        NSData* stickerData = [NSData dataWithContentsOfURL:stickerImage options:NSDataReadingUncached];
-        pasteboardItemsDictionary[@"com.instagram.sharedSticker.stickerImage"] = stickerData;
+      if (stickerImageURL) {
+          NSData *stickerData = [self getImageData:stickerImageURL];
+          if (stickerData) {
+            pasteboardItemsDictionary[@"com.instagram.sharedSticker.stickerImage"] = stickerData;
+          }
       }
       if (attributionURL) {
         pasteboardItemsDictionary[@"com.instagram.sharedSticker.contentURL"] = attributionURL;

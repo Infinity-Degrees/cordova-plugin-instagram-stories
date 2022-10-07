@@ -208,7 +208,7 @@
       // attribution link URL and the background colors to pasteboard
       NSMutableDictionary *pasteboardItemsDictionary = [@{ @"com.instagram.sharedSticker.backgroundVideo" : backgroundVideo } mutableCopy];
       if (stickerImage) {
-        NSData* stickerData = [NSData dataWithContentsOfURL:stickerImageURL options:NSDataReadingUncached error:&stickerImageError];
+        NSData* stickerData = [NSData dataWithContentsOfURL:stickerImage options:NSDataReadingUncached];
         pasteboardItemsDictionary[@"com.instagram.sharedSticker.stickerImage"] = stickerData;
       }
       if (attributionURL) {

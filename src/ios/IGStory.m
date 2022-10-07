@@ -92,7 +92,7 @@
     NSString* backgroundBottomColor = [command.arguments objectAtIndex:4];
     
     NSData *videoData = [self getImageData:backgroundVideo];
-    if (!imageData) {
+    if (!videoData) {
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Missing Video background"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self finishCommandWithResult:result commandId: command.callbackId];

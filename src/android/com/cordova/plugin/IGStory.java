@@ -185,15 +185,15 @@ public class IGStory extends CordovaPlugin {
 
   }
 
-  // TODO: fix this for videos
-  private void shareVideoToStory(String backgroundImageData, CallbackContext callbackContext) {
+  // TODO: fix this for videos, sticker and color not done yet
+  private void shareVideoToStory(String backgroundVideoData, String stickerImageUrl, String attributionLinkUrl, String backgroundTopColor, String backgroundBottomColor, CallbackContext callbackContext) {
 
     try {
       File parentDir = this.webView.getContext().getExternalFilesDir(null);
-      File backgroundImageFile = File.createTempFile("instagramBackground", ".mp4", parentDir);
+      File backgrounVideoFile = File.createTempFile("instagramBackground", ".mp4", parentDir);
       Log.i(TAG, "made it here");
 
-      saveImage(backgroundImageData, backgroundImageFile);
+      saveImage(backgroundVideoData, backgroundVideoFile);
 
       Log.i(TAG, "savedVideo");
 

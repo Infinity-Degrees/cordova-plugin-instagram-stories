@@ -60,32 +60,16 @@ public class IGStory extends CordovaPlugin {
         shareImageToStory(backgroundImageData, callbackContext);
       } else if (action.equals("shareVideoToStory")) {
         String backgroundVideoUrl = args.getString(0);
-
         String stickerAssetUrl = args.getString(1);
-        if (stickerAssetUrl.isEmpty()) {
-          stickerAssetUrl = null;
-        }
-
         String attributionLinkUrl = args.getString(2);
-        if (attributionLinkUrl.isEmpty()) {
-          attributionLinkUrl = null;
-        }
-
         String backgroundTopColor = args.getString(3);
-        if (backgroundTopColor.isEmpty()) {
-          backgroundTopColor = null;
-        }
-
         String backgroundBottomColor = args.getString(4);
-        if (backgroundBottomColor.isEmpty()) {
-          backgroundBottomColor = null;
-        }
 
         shareVideoToStory(backgroundVideoUrl, stickerAssetUrl, attributionLinkUrl, backgroundTopColor, backgroundBottomColor, callbackContext);
       } else {
         callbackContext.error("ig not installed");
       }
-
+      
     }
 
     return true;
@@ -203,6 +187,7 @@ public class IGStory extends CordovaPlugin {
 
   }
 
+  // TODO: fix this for videos, sticker and color not done yet
   private void shareVideoToStory(String backgroundVideoUrl, String stickerImageUrl, String attributionLinkUrl, String backgroundTopColor, String backgroundBottomColor, CallbackContext callbackContext) {
 
     try {
@@ -214,7 +199,7 @@ public class IGStory extends CordovaPlugin {
 
       Log.i(TAG, "made it here");
 
-      if (stickerImageUrl != null) {
+      if (!stickerImageUrl.isEmpty()) {
         URL stickerURL = new URL(stickerImageUrl);
         saveImage(stickerURL, stickerImageFile);
       }
@@ -228,7 +213,7 @@ public class IGStory extends CordovaPlugin {
       intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
       
       FileProvider FileProvider = new FileProvider();
-      if (stickerImageUrl != null) {
+      if (!stickerImageUrl.isEmtpy()) {
         stickerUri = FileProvider.getUriForFile(this.cordova.getActivity().getBaseContext(), this.cordova.getActivity().getBaseContext().getPackageName() + ".provider" ,stickerImageFile);
         Log.i(TAG, "got stickerUri: " + stickerUri);
       }
@@ -239,15 +224,15 @@ public class IGStory extends CordovaPlugin {
 
       intent.setDataAndType(backgroundUri, "video/mp4");
       
-      if (stickerImageUrl != null) {
+      if (!stickerImageUrl.isEmpty()) {
         intent.putExtra("interactive_asset_uri", stickerUri);
       }
 
-      if (attributionLinkUrl != null) {
+      if (attributionLinkUrl != null && !attributionLinkUrl.isEmpty()) {
         intent.putExtra("content_url", attributionLinkUrl);
       }
 
-      if (backgroundTopColor != null && backgroundBottomColor != null) {
+      if (!backgroundTopColor.isEmpty() && !backgroundBottomColor.isEmpty()) {
         intent.putExtra("top_background_color", backgroundTopColor);
         intent.putExtra("bottom_background_color", backgroundBottomColor);
       }
@@ -256,7 +241,7 @@ public class IGStory extends CordovaPlugin {
       // Instantiate activity and verify it will resolve implicit intent
       Activity activity = this.cordova.getActivity();
 
-      if (stickerImageUrl != null) {
+      if (!stickerImageUrl.isEmpty()) {
         activity.grantUriPermission("com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
       }
 

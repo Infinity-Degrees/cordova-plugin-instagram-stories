@@ -69,7 +69,12 @@ public class IGStory extends CordovaPlugin {
       } else {
         callbackContext.error("ig not installed");
       }
+<<<<<<< HEAD
       
+=======
+
+
+>>>>>>> parent of db9636d (fixing some more stuff)
     }
 
     return true;

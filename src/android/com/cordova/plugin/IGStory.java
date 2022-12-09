@@ -66,7 +66,6 @@ public class IGStory extends CordovaPlugin {
         String backgroundBottomColor = args.getString(4);
 
         shareVideoToStory(backgroundVideoUrl, stickerAssetUrl, attributionLinkUrl, backgroundTopColor, backgroundBottomColor, callbackContext);
-      }
       } else {
         callbackContext.error("ig not installed");
       }

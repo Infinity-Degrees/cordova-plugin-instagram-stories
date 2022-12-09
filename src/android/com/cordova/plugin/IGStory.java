@@ -190,14 +190,24 @@ public class IGStory extends CordovaPlugin {
   }
 
   // TODO: fix this for videos, sticker and color not done yet
-  private void shareVideoToStory(String backgroundVideoData, String stickerImageUrl, String attributionLinkUrl, String backgroundTopColor, String backgroundBottomColor, CallbackContext callbackContext) {
+  private void shareVideoToStory(String backgroundVideoUrl, String stickerImageUrl, String attributionLinkUrl, String backgroundTopColor, String backgroundBottomColor, CallbackContext callbackContext) {
 
     try {
       File parentDir = this.webView.getContext().getExternalFilesDir(null);
-      File backgrounVideoFile = File.createTempFile("instagramBackground", ".mp4", parentDir);
+      File backgroundVideoFile = File.createTempFile("instagramBackground", ".mp4", parentDir);
+      File stickerImageFile = File.createTempFile("instagramSticker", ".png", parentDir);
+      Uri stickerUri = null;
+      Uri backgroundUri = null;
+
       Log.i(TAG, "made it here");
 
-      saveImage(backgroundVideoData, backgroundVideoFile);
+      if (!stickerImageUrl.isEmpty()) {
+        URL stickerURL = new URL(stickerImageUrl);
+        saveImage(stickerURL, stickerImageFile);
+      }
+
+      URL backgroundURL = new URL(backgroundVideoUrl);
+      saveImage(backgroundURL, backgroundVideoFile);
 
       Log.i(TAG, "savedVideo");
 
@@ -205,15 +215,38 @@ public class IGStory extends CordovaPlugin {
       intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
       
       FileProvider FileProvider = new FileProvider();
-      Uri backgroundUri = FileProvider.getUriForFile(this.cordova.getActivity().getBaseContext(), this.cordova.getActivity().getBaseContext().getPackageName() + ".provider", backgroundImageFile);
+      if (!stickerImageUrl.isEmtpy()) {
+        stickerUri = FileProvider.getUriForFile(this.cordova.getActivity().getBaseContext(), this.cordova.getActivity().getBaseContext().getPackageName() + ".provider" ,stickerImageFile);
+        Log.i(TAG, "got stickerUri: " + stickerUri);
+      }
+      
+      backgroundUri = FileProvider.getUriForFile(this.cordova.getActivity().getBaseContext(), this.cordova.getActivity().getBaseContext().getPackageName() + ".provider" ,backgroundVideoFile);
 
       Log.i(TAG, "got backgroundUri: " + backgroundUri);
 
       intent.setDataAndType(backgroundUri, "video/mp4");
+      
+      if (!stickerImageUrl.isEmpty()) {
+        intent.putExtra("interactive_asset_uri", stickerUri);
+      }
+
+      if (attributionLinkUrl != null && !attributionLinkUrl.isEmpty()) {
+        intent.putExtra("content_url", attributionLinkUrl);
+      }
+
+      if (!backgroundTopColor.isEmpty() && !backgroundBottomColor.isEmpty()) {
+        intent.putExtra("top_background_color", backgroundTopColor);
+        intent.putExtra("bottom_background_color", backgroundBottomColor);
+      }
 
       Log.i(TAG, "instantiating activity");
       // Instantiate activity and verify it will resolve implicit intent
       Activity activity = this.cordova.getActivity();
+
+      if (!stickerImageUrl.isEmpty()) {
+        activity.grantUriPermission("com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      }
+
       activity.grantUriPermission("com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
       activity.startActivityForResult(intent, 0);

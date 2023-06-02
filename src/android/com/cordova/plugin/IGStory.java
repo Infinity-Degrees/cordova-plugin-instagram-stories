@@ -105,6 +105,10 @@ public class IGStory extends CordovaPlugin {
         String type = "image/*";
 
         Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
+        
+        String sourceApplication = "1936818296682390"; // This is your application's FB ID
+        intent.putExtra("source_application", sourceApplication);
+        
         intent.setType(type);
         intent.putExtra("content_url", attributionLinkUrl);
         intent.putExtra("top_background_color", backgroundTopColor);

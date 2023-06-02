@@ -109,7 +109,7 @@
 
     // Verify app can open custom URL scheme. If able,
     // assign assets to pasteboard, open scheme.
-    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", 1936818296682390]];
+    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", "1936818296682390"]];
     if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
       
       NSLog(@"IG IS AVAIALBLE");
@@ -156,7 +156,7 @@
     
     // Verify app can open custom URL scheme. If able,
     // assign assets to pasteboard, open scheme.
-    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", 1936818296682390]];
+    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", "1936818296682390"]];
     if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
         
         NSLog(@"IG IS AVAIALBLE");
@@ -199,7 +199,7 @@
 
     // Verify app can open custom URL scheme. If able,
     // assign assets to pasteboard, open scheme.
-    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", 1936818296682390]];
+    NSURL *urlScheme = [NSURL URLWithString:[NSString stringWithFormat:@"instagram-stories://share?source_application=%@", "1936818296682390"]];
     if ([[UIApplication sharedApplication] canOpenURL:urlScheme]) {
       
       NSLog(@"IG IS AVAIALBLE");
